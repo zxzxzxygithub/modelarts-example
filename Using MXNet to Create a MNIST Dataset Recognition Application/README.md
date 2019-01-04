@@ -26,6 +26,8 @@
 
 **步骤 5**  &#160; &#160; 在数据集目录页面获取创建的mnist数据集的桶信息mnist-data-set-73625398-909b-469c-895a-17fc5acc7575/mnist/。请参考下图。
 
+图2 市场导入的数据集信息
+
 <img src="images/数据集.PNG" width="800px" />
 
 训练需要的数据集(**注意是没有.gz的后缀的文件**)：
@@ -72,32 +74,46 @@
 
 模型训练完成后，可以创建预测作业，将模型部署为在线预测服务，操作步骤如下：
 
-**步骤 1**  &#160; &#160; 在“模型管理”界面，单击左上角的“导入”，参考图2填写参数。
+**步骤 1**  &#160; &#160; 下载需要的推理代码和config.json文件。
 
-图2 导入模型参数配置
+下载https://github.com/huawei-clouds/modelarts-example
+
+图3 从github下载文件
+
+<img src="images/download.png" width="800px" />
+
+将解压后的Using MXNet to Create a MNIST Dataset Recognition Application/codes目录下的推理代码customize_service.py(不可更改名称)和config.json(不可更改名称)上传至训练的输出路径的model目录下
+
+图4 上传推理代码和config.json文件
+
+<img src="images/upload.png" width="800px" />
+
+
+
+**步骤 2**      在“模型管理”界面，单击左上角的“导入”，参考图2填写参数。
+
+图5 导入模型参数配置
 
 <img src="images/导入参数.png" width="800px" />
 
+其中元模型的路径需要设置为.params和.json文件所在文件夹的上一层文件夹，比如图4红框的路径：mnist_model为之前训练作业的输出路径。
 
+图6 元模型路径选择
 
-其中元模型的路径需要设置为.params和.json文件所在文件夹的上一层文件夹，比如图3红框的路径：/test-only/ckpt/为之前训练作业的输出路径。
+<img src="images/路径选择.png" width="800px" />
 
-图3 元模型指定路径
+或者直接从训练作业创建模型。
 
-<img src="images/元模型指定路径.png" width="800px" />
+图7 从训练作业导入模型
 
-
-
-推理代码参考<a href ="codes/dls_classification_service.py">dls\_classification\_service.py</a> ，名称可随意填写。将推理代码上传到obs，并将其文件路径设置到模型参数配置中的“推理代码”输入框。
-
-
+<img src="images/导入参数2.png" width="800px" />
 
 **步骤 2**  &#160; &#160; 参数确认无误后，单击“立即创建”，完成模型创建。
 
 
-当模型状态为“正常”时，表示创建成功。单击部署-在线服务，创建预测服务，参考图4填写参数。
+当模型状态为“正常”时，表示创建成功。单击部署-在线服务，创建预测服务，参考图6填写参数。
 
-图4 部署在线服务参数配置
+图8 部署在线服务参数配置
 
 <img src="images/部署在线服务参数配置.PNG" width="1000px" />
 
@@ -109,9 +125,9 @@
 
 
 ### 4. 发起预测请求
-完成模型部署后，在部署上线-在线服务界面可以看到已上线的预测服务名称，点击进入可以进行在线预测，如图5。
+完成模型部署后，在部署上线-在线服务界面可以看到已上线的预测服务名称，点击进入可以进行在线预测，如图7。
 
-图5 在线服务测试
+图9 在线服务测试
 
 <img src="images/在线服务测试.PNG" width="1000px" />
 
