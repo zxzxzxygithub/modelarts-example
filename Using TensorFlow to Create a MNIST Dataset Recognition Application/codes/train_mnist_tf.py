@@ -10,15 +10,7 @@ tf.flags.DEFINE_string('train_url', None, 'Train Url')
 tf.flags.DEFINE_integer('max_num_steps', 1000, 'training epochs')
 tf.flags.DEFINE_boolean('is_training', True, 'train')
 
-_S3_SECRET_ACCESS_KEY = (os.environ.get('SECRET_ACCESS_KEY', None)
-                         or os.environ.get('S3_SECRET_ACCESS_KEY', None)
-                         or os.environ.get('AWS_SECRET_ACCESS_KEY', None))
-_S3_ACCESS_KEY_ID = (os.environ.get('ACCESS_KEY_ID', None)
-                     or os.environ.get('S3_ACCESS_KEY_ID', None)
-                     or os.environ.get('AWS_ACCESS_KEY_ID', None))
-
-mox.file.set_auth(ak=_S3_ACCESS_KEY_ID, sk=_S3_SECRET_ACCESS_KEY)
-
+mox.file.shift('tf', 'mox')
 flags = tf.flags.FLAGS
 
 def main(*args):
