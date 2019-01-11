@@ -3,14 +3,12 @@ import tensorflow as tf
 import numpy as np
 import os
 from tensorflow.python.framework import graph_util
-import moxing as mox
 
 tf.flags.DEFINE_string('data_url', None, 'Dir of dataset')
 tf.flags.DEFINE_string('train_url', None, 'Train Url')
 tf.flags.DEFINE_integer('max_num_steps', 1000, 'training epochs')
 tf.flags.DEFINE_boolean('is_training', True, 'train')
 
-mox.file.shift('tf', 'mox')
 flags = tf.flags.FLAGS
 
 def main(*args):
