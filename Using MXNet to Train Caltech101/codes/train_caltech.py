@@ -1,3 +1,5 @@
+import ctypes
+ctypes.CDLL('./codes/libimageaugdefault.so', ctypes.RTLD_LOCAL)
 import mxnet as mx
 import argparse
 import logging
@@ -96,7 +98,7 @@ def fit(args):
                         'lr_scheduler': mx.lr_scheduler.MultiFactorScheduler(
                             step=lr_step,
                             factor=args.lr_factor)}
-    metrics = [mx.metric.Accuracy(), mx.metric.CrossEntropy()]
+    metrics = [mx.metric.Accuracy(), mx.metric.CrossEntropy(), mx.metric.TopKAccuracy(5)]
     # run
     model.fit(train_data=train,
               eval_data=val,
@@ -150,7 +152,7 @@ if __name__ == '__main__':
                         help='layers of resnet, support 18 34 50')
     parser.add_argument('--lr', type=float, default=0.1,
                         help='initial learning rate')
-    parser.add_argument('--lr_step', type=str, default='14,24,27',
+    parser.add_argument('--lr_step', type=str, default='16, 24, 27',
                         help='change lr epoch')
     parser.add_argument('--lr_factor', type=float, default=0.1,
                         help='learning rate change factor')
@@ -163,9 +165,9 @@ if __name__ == '__main__':
     parser.add_argument('--kv_store', type=str, default='device',
                         help='key-value store type')
     parser.add_argument('--train_url', type=str,
-                        default='/home/chenyi00451803/train_result/',
+                        default='/home/chenyi00451803/train_url/',
                         help='the path model saved')
-    parser.add_argument('--num_gpus', type=int, default='4',
+    parser.add_argument('--num_gpus', type=int, default='1',
                         help='number of gpus')
     parser.add_argument('--export_model', type=int, default=1, help='1: export model for predict job \
                                                                      0: not export model')
