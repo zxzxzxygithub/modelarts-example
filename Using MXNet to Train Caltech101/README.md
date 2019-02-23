@@ -1,137 +1,202 @@
 
 # 使用MXNet实现Caltech图像识别应用
 
-本文介绍在华为云ModelArts平台如何使用MXNet实现Caltech图像识别应用。操作的流程分为4部分，分别是：
+本实验介绍在华为云ModelArts平台如何使用深度学习框架MXNet训练Caltech数据集，并把得到的模型发布成一个可用的推理服务。
 
 基本流程包含以下步骤：
 
-1. **准备数据**：下载数据集，解压后上传至OBS桶中。
+1. **准备数据**：下载数据集，上传至OBS桶中。
 2. **训练模型**：使用MXNet原生接口编写模型训练脚本，新建训练作业进行模型训练。
 3. **部署模型**：得到训练好的模型文件后，新建预测作业将模型部署为在线预测服务。
 4. **发起预测请求**：下载并导入客户端工程，发起预测请求获取预测结果。
 
+MXNet框架介绍：Apache MXNet是一个开源深度学习软件框架，可用于训练和部署深度神经网络。它具有很高的可扩展性，支持命令式和符号式编程，并支持多种编程语言，包括C ++，Python，Julia，Matlab，JavaScript，Go，R，Scala，Perl和Wolfram语言。
+
+MXNet的优势：性能比起tensorflow等语言而言更好，支持的语言更多，比起caffe等框架更省内存。
+
+MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https://github.com/deepinsight/insightface。
 
 ### 1. 准备数据
-通过ModelArts市场预置数据集创建自动学习所需数据集版本，具体操作如下：
 
-**步骤 1**  &#160; &#160; 登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥。如图:
+数据集介绍： Caltech101数据集是加利福尼亚理工学院提供的101类（加一个背景类）开源图像数据集，每一类大约有40~800张左右的图片，每张图片是接近300×200大小不等的。关于该数据集详细可以参见http://www.vision.caltech.edu/Image_Datasets/Caltech101/#Description。
+
+本实验不需要下载该数据集，通过下载市场里共享的数据集到自己的OBS（对象存储容器）中，具体操作如下：
+
+**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥。如图:
 
 <img src="images/添加aksk.png" width="800px" />
 
-**步骤 2**  &#160; &#160; 返回“ModelArts”管理控制台，单击左侧导航栏的“市场”。 切换到ModelArts市场的“数据集”页面，找到数据集“Mnist-Data-Set”。
+**步骤 2**  &#160; &#160;
 
-**步骤 3**  &#160; &#160; 进入到该预置数据集“Mnist-Data-Set”的详情页面，执行“导入到我的数据集”操作，页面会自动跳转到“数据管理>数据集”页面进行创建。
+**步骤 3**  &#160; &#160;
 
-**步骤 4**  &#160; &#160; 在“ModelArts”管理控制台的“数据管理>数据集”页面查看直到mnist数据集（Mnist-Data-Set）创建完成，数据详细信息完全加载。
+**步骤 4**  &#160; &#160;
 
-**步骤 5**  &#160; &#160; 在数据集目录页面获取创建的mnist数据集的桶信息mnist-data-set-73625398-909b-469c-895a-17fc5acc7575/mnist/。请参考下图。
+**步骤 5**  &#160; &#160;
 
-图2 市场导入的数据集信息
-
-<img src="images/数据集.PNG" width="800px" />
-
-训练需要的数据集(**注意是没有.gz的后缀的文件**)：
-
-- t10k-images-idx3-ubyte：验证集，共包含10000个样本。
-- t10k-labels-idx1-ubyte：验证集标签，共包含10000个样本的类别标签。
-- train-images-idx3-ubyte：训练集，共包含60000个样本。
-- train-labels-idx1-ubyte：训练集标签，共包含60000个样本的类别标签。
 
 
 ### 2. 训练模型
-接下来，要编写模型训练脚本代码（本案例中已编写好了训练脚本），并完成模型训练，操作步骤如下：
 
-**步骤 1**  &#160; &#160; 复制由MXNet原生接口编写的模型训练脚本文件<a href ="codes/train_mnist.py">train\_mnist.py</a>，（在github界面右上角点击raw）并将其粘贴到本地的train_mnist.py脚本中，或登录github进行下载。
+训练算法介绍：本实验使用了深度卷积神经网络resnet进行了训练，resnet的卷积层个数可选为18,34,50。在可选的18,34,50情况下，模型层数越大，代表模型越深，训练所需的时间越长，模型准确率能更好。resnet是常用的图像分类卷积神经网络之一，在codes目录下有resnet18的网络结构图plot.gv.pdf。
 
-**步骤 2** &#160; &#160; 参考<a href = "https://support.huaweicloud.com/usermanual-dls/dls_01_0040.html">“上传业务数据”</a>章节内容，将脚本文件上传至华为云OBS桶 （s3://你的桶名/你的文件名/,注意路径中不要出现中文）。
+接下来，将训练代码上传到OBS中，并完成模型训练，操作步骤如下：
 
-**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图1填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择“数据集”Mnist-Data-Set{或者“数据的存储位置”(本例中为mnist-data-set-73625398-909b-469c-895a-17fc5acc7575/mnist)}；**AI引擎选用mxnet。**
+**步骤 1**  &#160; &#160; 从github上下载该完整工程，codes就是我们用到的训练代码。点击给的目录链接的上一级目录。
+
+图2.1 回到下载整个项目的上一级目录
+
+<img src="images/backtodownload.png" width="800px" />
+
+然后点击右上角的Clone or download选择download zip下载项目的压缩包，最后把项目中的Using MXNet to Train Caltech101解压到本地。
+
+图2.2 下载项目并解压Using MXNet to Train Caltech101
+
+<img src="images/downloadproject.png" width="800px" />
 
 
-图2 训练作业参数配置
+
+**步骤 2** &#160; &#160; 下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets并登录自己的华为云账号，选择适合的下载。
+
+图2.3 下载obs-browser
+
+<img src="images/downloadobs.png" width="800px" />
+
+下载好的obs-browser是一个压缩包，将里面所有的文件解压，然后点击obs.exe运行。在打开的界面右上角添加账户，账户名可任意填写，AccessKeyID和SecretAccessKey就是在准备数据前添加的AK/SK。
+
+图2.4 obs-browser添加账号
+
+<img src="images/obsadduser.png" width="800px" />
+
+添加完账号后，把代码目录codes整个上传到obs里。**注意：从第一步下载的数据不要和代码文件放在同一个目录下**，**且不要更改codes目录的名称**。
+
+图2.5 上传codes到obs
+
+<img src="images/uploadcodes.png" width="800px" />
+
+
+
+**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.6填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据集里从市场导入的Caltech101；**AI引擎选用mxnet。**
+
+
+图2.6 训练作业参数配置
 
 <img src="images/训练作业参数1.png" width="800px" />
 
 可选运行参数说明：
 
-1. num_epochs：训练需要迭代的次数，默认10；
-2. batch_size：训练的每一步包含的样本数量大小， 默认128；
-3. kv_store：使用单计算节点时，kv_store设置为‘local’或‘device’；如果计算节点个数大于1，kv_store需要设置为‘dist_sync’或‘dist_sync_device’，默认‘device’；
-4. num_classes：类别数量，默认10；
-5. lr：学习率，默认0.05；
-6. disp_batches：每隔多少步输出一次，默认20；
-7. num_gpus：gpu数量；
-8. export_model：是否导出可供预测服务的模型参数，默认为1，表示输出；
-9. train_url（训练输出路径）：模型输出路径，可在运行参数添加train_url或训练输出位置二选一添加；
-10. data_url：数据集路径；
-11. 计算节点规格前者为cpu，后者1*P100为GPU，训练作业推荐使用后者GPU；
-12. 计算节点个数，2个及以上为分布式训练，需要更改对应的运行参数kv_store，1则为单机模式不用更改参数kv_store；
+1. num_epochs：int，训练需要迭代的次数，默认30；
+2. batch_size：int，训练的每一步包含的样本数量大小， 默认128；
+3. lr：float，学习率，默认0.1；
+4. lr_step: str，学习率减小的epoch，默认为‘16,24,27’，也就是说学习率会在第16个epoch结束时减小为原来的0.1倍，即0.01；
+5. num_layers：int，resnet模型的卷积层数，可供选择的有18,34,50，默认为34；
+6. disp_batches：int，每隔多少步输出一次，默认20；
+7. 计算节点规格选用计算型GPU（P100实例）；
 
-**步骤 5**  &#160; &#160;  参数确认无误后，单击“立即创建”，完成训练作业创建。训练作业完成后，即完成了模型训练过程。如有问题，可点击作业名称，进入作业详情界面查看训练作业日志信息。
+**步骤 4**  &#160; &#160;  参数确认无误后，单击“立即创建”，完成训练作业创建。训练作业完成后，即完成了模型训练过程。如有问题，可从训练作业界面点击作业名称，进入作业详情界面查看训练作业日志信息。
 
 
 ### 3. 部署模型
 
-模型训练完成后，可以创建预测作业，将模型部署为在线预测服务，操作步骤如下：
+模型训练完成后，可以创建预测作业，将模型部署为在线预测服务，要部署成推理服务需要上传推理代码和配置文件，操作步骤如下：
 
-**步骤 1**  &#160; &#160; 下载需要的推理代码和config.json文件。
+**步骤 1**  &#160; &#160; 上传需要的推理代码和config.json文件。这两个文件存放在codes目录下，分别叫customize_service.py和config.json。将这两个文件上传至输出路径的model目录下。
 
-下载https://github.com/huawei-clouds/modelarts-example
+图3.1 上传推理代码和config.json文件
 
-图3 从github下载文件
+<img src="images/uploadfile.png" width="800px" />
 
-<img src="images/download.png" width="800px" />
+**步骤 2**      在“模型管理”界面，单击左上角的“导入”，参考图3.2填写参数。
 
-将解压后的Using MXNet to Create a MNIST Dataset Recognition Application/codes目录下的推理代码customize_service.py(不可更改名称)和config.json(不可更改名称)上传至训练的输出路径的model目录下
+图3.2 导入模型参数配置
 
-图4 上传推理代码和config.json文件
+<img src="images/loadmodel.png" width="800px" />
 
-<img src="images/upload.png" width="800px" />
+其中元模型的路径需要设置为model文件所在文件夹的上一层文件夹，比如图3.1红框的路径的父目录：demo_model为之前训练作业的输出路径。
 
+或者直接从训练作业创建模型。注意：必须要上传推理代码和config配置文件后才能成功导入。
 
+图3.3 从训练作业导入模型
 
-**步骤 2**      在“模型管理”界面，单击左上角的“导入”，参考图2填写参数。
-
-图5 导入模型参数配置
-
-<img src="images/导入参数.png" width="800px" />
-
-其中元模型的路径需要设置为.params和.json文件所在文件夹的上一层文件夹，比如图4红框的路径：mnist_model为之前训练作业的输出路径。
-
-图6 元模型路径选择
-
-<img src="images/路径选择.png" width="800px" />
-
-或者直接从训练作业创建模型。
-
-图7 从训练作业导入模型
-
-<img src="images/导入参数2.png" width="800px" />
+<img src="images/loadmodel2.png" width="800px" />
 
 **步骤 2**  &#160; &#160; 参数确认无误后，单击“立即创建”，完成模型创建。
 
+当模型状态为**“正常”**时，表示创建成功。单击部署-在线服务，创建预测服务。
 
-当模型状态为“正常”时，表示创建成功。单击部署-在线服务，创建预测服务，参考图6填写参数。
+3.4 部署在线服务
 
-图8 部署在线服务参数配置
+<img src="images/prediction.png" width="800px" />
 
-<img src="images/部署在线服务参数配置.PNG" width="1000px" />
-
-参数说明：
-
-1. input_data_name：输入数据的名字；
-2. input_data_shape：输入数据需要的形状；
-3. output_data_shape：模型输出数据的形状，这里’0,10‘表示输出的类别在0到10之间；
+输入任意名称后，直接点击下一步然后创建在线服务，注意：计算节点规格这里使用cpu已足够满足本实验的需求，如果有其他需要，比如物体检测的项目建议使用1*P4的gpu规格。
 
 
 ### 4. 发起预测请求
-完成模型部署后，在部署上线-在线服务界面可以看到已上线的预测服务名称，点击进入可以进行在线预测，如图7。
+完成模型部署后，等待服务部署完成显示运行中就可以开始进行预测了。在部署上线-在线服务界面可以看到已上线的预测服务名称，点击服务名称可以进入服务测试在线预测，如图4.1。
 
-图9 在线服务测试
+图4.1 在线服务测试
 
-<img src="images/在线服务测试.PNG" width="1000px" />
+<img src="images/postpredict.png" width="800px" />
 
-如果想使用自己的手写图片，可以参照[make_your_mnist.py](mnist_pic/make_your_mnist.py)，只需修改图片数据的路径即可，**其中原图需要使用黑底白字**。
+点击测试->图片进入上传图片的测试界面。单击"···"选择本地的图片上传后点击测试，在右侧会输出预测的结果。如图4.2测试的是一张笔记本电脑的图片观察模型是否能将它归类正确：
 
-输出结果解释：'class'就是类的名称，比如这里我们第一项class为6，就是数字6这一类。类后的参数为概率，即预测为6的可能性为100%，别的数字都为0。
+图4.2 测试一张笔记本电脑的图片
 
+<img src="images/testlabtop.png" width="800px" />
+
+输出说明：
+
+predicted_label：是这个模型最终认为这张图片的归类，这里我们可以看到输出的是“labtop”也就是笔记本电脑，所以这张图片能够被这个模型预测正确。
+
+scores：置信度，也就是模型认为这张图片属于某一类的概率。这里会输出概率最高的前五项，这是在网络的最后一层加入了softmax层转化来的。
+
+**注意：启动了推理服务完成了测试之后一定要及时点击右上角的停止按键停止服务，防止一直启动造成账号欠费。**
+
+本实验到这里就已经结束了，如果你希望学习更多和深度学习相关的方法或者想亲自试试深度学习训练过程的调参，可以继续往下看，当然如果不感兴趣也可以跳过。
+
+### **提高：**
+
+当然，并不是所有的图片都能够预测正确，比如本实验如果使用的全都是默认的参数去进行训练，在验证集上差不多只有78%左右的准确率。当然，如果对结果不满意，或者想自己尝试让深度学习的模型效果更加好，可以调节下列参数num_epochs；batch_size；lr；lr_step；num_layers；（参数说明见2.训练模型的步骤3）。在训练日志中，每个epoch结束都会输出模型当前在验证集上的表现，如图1-1所示，可以通过这些的变化来观察改动了上述参数后对训练模型有什么样的影响。
+图1-1 训练输出日志
+
+<img src="images/Validation.png" width="800px" />
+
+几项指标值的解释：
+
+Validation-accuracy: 预测的置信度最高的类别是正确的比例，即上述推理测试时输出predicted_label正确占总预测结果的比例，结果越高，模型越好。在深度学习领域一般称为top-1；
+
+Validation-cross-entropy: 交叉熵，用来评判对每一类预测准确率的损失值，越小越好；
+
+Validation-top_k_accuracy_5: 预测的置信度最高的前5类中如果有正确的那一类，就认为这次预测是正确的。在深度学习领域一般称为top-5，同样，结果越高，模型越好。
+
+这里数值的改变可能并不能提供一个直观的模型效果提升，在项目Using MXNet to Train Caltech101下有一个test文件夹，里面有一些测试图片。这些图片在现有的模型上有的能预测正确，有的不能。比如下面这一张：
+
+图1-2 预测错误的图片
+
+<img src="images/top5.png" width="800px" />
+
+
+
+但是这张图片概率排在第二的是预测正确的，也就是top5是正确的，也许经过调参，可以让这张图片预测的结果变成正确的，同样，也可能将原来那些预测不正确的图片预测正确，这就是对模型的能力有一定提升。当然，如果会使用MXNet,完全可以自己修改代码或者制作自己的rec文件来进行训练，ModelArts同样提供开发环境可以让使用者直接在云上修改代码，详情操作见附。
+
+
+
+附：这里的说明只针对想使用开发环境在云上修改代码或者修改文件的使用者。
+
+1. 点击总览界面的开发环境->Notebook->创建，如图2-1所示。
+
+   图2-1 Notebook界面引导
+
+   <img src="images/createNotebook1.png" width="800px" />
+
+2. 输入各项参数，AI引擎决定了Notebook上的系统环境，这里选择MXNet，如图2-2所示。
+
+   图2-2 创建NoteBook
+
+   <img src="/images/createNotebook2.png" width="800px" />
+
+3. 等待状态变成运行中后打开，在jupyter界面可以直接打开相应文件进行更改然后保存，也可以在右上角的New中创建Python环境运行代码做调试，或者新建Terminal（linux云上开发环境）去调试代码。**同样要注意，如果不使用Notebook了之后及时停止服务，以免造成欠费。**
+
+   图2-3 使用Notebook
+
+   <img src="/images/useNotebook.png" width="800px" />
