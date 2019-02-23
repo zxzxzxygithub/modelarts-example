@@ -193,10 +193,10 @@ Validation-top_k_accuracy_5: 预测的置信度最高的前5类中如果有正�
 
    图2-2 创建NoteBook
 
-   <img src="/images/createNotebook2.png" width="800px" />
+   <img src="images/createNotebook2.png" width="800px" />
 
 3. 等待状态变成运行中后打开，在jupyter界面可以直接打开相应文件进行更改然后保存，也可以在右上角的New中创建Python环境运行代码做调试，或者新建Terminal（linux云上开发环境）去调试代码。**同样要注意，如果不使用Notebook了之后及时停止服务，以免造成欠费。**
 
    图2-3 使用Notebook
 
-   <img src="/images/useNotebook.png" width="800px" />
+   <img src="images/useNotebook.png" width="800px" />
