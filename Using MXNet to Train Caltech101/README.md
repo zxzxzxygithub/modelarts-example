@@ -38,19 +38,19 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 图1.2 下载obs-browser
 
-<img src="/images/downloadobs.png" width="800px" />
+<img src="images/downloadobs.png" width="800px" />
 
 下载好的obs-browser是一个压缩包，将里面所有的文件解压，然后点击obs.exe运行。在打开的界面右上角添加账户，账户名可任意填写，AccessKeyID和SecretAccessKey就是在准备数据前添加的AK/SK。
 
 图1.3 obs-browser添加账号
 
-<img src="/images/obsadduser.png" width="800px" />
+<img src="images/obsadduser.png" width="800px" />
 
 将caltech101整个文件上传至OBS桶中并等待右上角云标志传输完成。
 
 图1.4 上传文件至OBS
 
-<img src="/images/uploaddata.png" width="800px" />
+<img src="images/uploaddata.png" width="800px" />
 
 ### 2. 训练模型
 
