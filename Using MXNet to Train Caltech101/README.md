@@ -26,9 +26,31 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 <img src="images/添加aksk.png" width="800px" />
 
-**步骤 2**  &#160; &#160;完成AK/SK添加后，需要从市场中导入数据集
+**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://10.175.38.120/xuchao6/dataset/caltech101.zip下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
 
-数据集解释：该数据集分为两部分，一部分是文件夹中的图片，这是下载的开源数据集，我们一般称之为原始图片，另一部分是为了方便进行预处理操作，已经制作好了MXNet使用的rec文件。这里需要说明的是，在深度学习领域，训练之前一般会把数据集按6:2:2的比例分成训练集、验证集和测试集。训练集就是我们训练时使用的数据集，验证集是在训练过程中评估模型好坏的数据集，测试集是在训练完成以后评估模型的数据集。这里我们不需要评估模型最终的结果如何，所以没有使用测试集，按8:2分成了训练集和验证集。train是训练集，val是验证集。这里还有lst文件和idx文件，lst文件里是图片路径的list，即train和val数据集里各有哪些图片。详细制作方法参见https://mxnet.incubator.apache.org/versions/master/faq/recordio.html?highlight=rec%20file。
+数据集解释：该数据集分为两部分，
+
+一部分是original_files中的图片，这是下载的开源数据集解压后得到的，我们一般称之为原始图片，
+
+另一部分mxnet_format是为了方便进行预处理操作，已经制作好了MXNet使用的rec文件。这里需要说明的是，在深度学习领域，训练之前一般会把数据集按6:2:2的比例分成训练集、验证集和测试集。训练集就是我们训练时使用的数据集，验证集是在训练过程中评估模型好坏的数据集，测试集是在训练完成以后评估模型的数据集。这里我们不需要评估模型最终的结果如何，所以没有使用测试集，按8:2分成了训练集和验证集。train是训练集，val是验证集。这里还有lst文件和idx文件，lst文件里是图片路径的list，即train和val数据集里各有哪些图片。详细制作方法参见https://mxnet.incubator.apache.org/versions/master/faq/recordio.html?highlight=rec%20file。
+
+**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets并登录自己的华为云账号，选择适合的下载。
+
+图1.2 下载obs-browser
+
+<img src="/images/downloadobs.png" width="800px" />
+
+下载好的obs-browser是一个压缩包，将里面所有的文件解压，然后点击obs.exe运行。在打开的界面右上角添加账户，账户名可任意填写，AccessKeyID和SecretAccessKey就是在准备数据前添加的AK/SK。
+
+图1.3 obs-browser添加账号
+
+<img src="/images/obsadduser.png" width="800px" />
+
+将caltech101整个文件上传至OBS桶中并等待右上角云标志传输完成。
+
+图1.4 上传文件至OBS
+
+<img src="/images/uploaddata.png" width="800px" />
 
 ### 2. 训练模型
 
@@ -50,39 +72,29 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 
 
-**步骤 2** &#160; &#160; 下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets并登录自己的华为云账号，选择适合的下载。
+**步骤 2** &#160; &#160; 上传数据集代码，把代码目录codes整个上传到obs里。**注意：从第一步下载的数据不要和代码文件放在同一个目录下**，**且不要更改codes目录的名称**。
 
-图2.3 下载obs-browser
-
-<img src="images/downloadobs.png" width="800px" />
-
-下载好的obs-browser是一个压缩包，将里面所有的文件解压，然后点击obs.exe运行。在打开的界面右上角添加账户，账户名可任意填写，AccessKeyID和SecretAccessKey就是在准备数据前添加的AK/SK。
-
-图2.4 obs-browser添加账号
-
-<img src="images/obsadduser.png" width="800px" />
-
-添加完账号后，把代码目录codes整个上传到obs里。**注意：从第一步下载的数据不要和代码文件放在同一个目录下**，**且不要更改codes目录的名称**。
-
-图2.5 上传codes到obs
+图2.3 上传codes到obs
 
 <img src="images/uploadcodes.png" width="800px" />
 
 
 
-**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.6填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据集里从市场导入的Caltech101所在的桶路径；**AI引擎选用mxnet。**
+**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.4填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据集里从市场导入的Caltech101所在的桶路径；**AI引擎选用mxnet。**
 
 
-图2.6 训练作业参数配置
+图2.4 训练作业参数配置
 
+<img src="images/trainparams.png" width="800px" />
 
+注意数据集位置要选到mxnet_format目录下，可以在运行参数中填写可选运行参数，说明如下。
 
 可选运行参数说明：
 
 1. num_epochs：int，训练需要迭代的次数，默认30；
-2. batch_size：int，训练的每一步包含的样本数量大小， 默认128；
+2. batch_size：int，训练的每次更新包含的样本数量大小， 默认128；
 3. lr：float，学习率，默认0.1；
-4. lr_step: str，学习率减小的epoch，默认为‘16,24,27’，也就是说学习率会在第16个epoch结束时减小为原来的0.1倍，即0.01；
+4. lr_step: str，学习率减小的epoch，默认为‘16,24,27’，也就是说学习率会在第16个epoch结束时减小为原来的0.1倍，为0.01，第24,27epoch同理；
 5. num_layers：int，resnet模型的卷积层数，可供选择的有18,34,50，默认为34；
 6. disp_batches：int，每隔多少步输出一次，默认20；
 7. 计算节点规格选用计算型GPU（P100实例）；
