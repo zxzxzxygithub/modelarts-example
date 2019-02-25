@@ -34,7 +34,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 另一部分mxnet_format是为了方便进行预处理操作，已经制作好了MXNet使用的rec文件。这里需要说明的是，在深度学习领域，训练之前一般会把数据集按6:2:2的比例分成训练集、验证集和测试集。训练集就是我们训练时使用的数据集，验证集是在训练过程中评估模型好坏的数据集，测试集是在训练完成以后评估模型的数据集。这里我们不需要评估模型最终的结果如何，所以没有使用测试集，按8:2分成了训练集和验证集。train是训练集，val是验证集。这里还有lst文件和idx文件，lst文件里是图片路径的list，即train和val数据集里各有哪些图片。详细制作方法参见https://mxnet.incubator.apache.org/versions/master/faq/recordio.html?highlight=rec%20file。
 
-**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets并登录自己的华为云账号，选择适合的下载。
+**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets 并登录自己的华为云账号，选择适合的下载。
 
 图1.2 下载obs-browser
 
