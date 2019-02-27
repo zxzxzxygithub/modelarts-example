@@ -22,11 +22,11 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 本实验不需要下载该数据集，通过下载市场里共享的数据集到自己的OBS（对象存储容器）中，具体操作如下：
 
-**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥。如图:
+**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥，关于ak/sk的获取参考https://support.huaweicloud.com/usermanual-modelarts/modelarts_02_0003.html，注意，要使用modelarts的功能必须完成实名认证。完成后如图:
 
 <img src="images/添加aksk.png" width="800px" />
 
-**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://modelarts-cnnorth1-learning-course.obs.cn-north-1.myhuaweicloud.com/dataset/caltech101.zip 下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
+**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://10.175.38.120/xuchao6/dataset/caltech101.zip下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
 
 数据集解释：该数据集分为两部分，
 
@@ -34,7 +34,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 另一部分mxnet_format是为了方便进行预处理操作，已经制作好了MXNet使用的rec文件。这里需要说明的是，在深度学习领域，训练之前一般会把数据集按6:2:2的比例分成训练集、验证集和测试集。训练集就是我们训练时使用的数据集，验证集是在训练过程中评估模型好坏的数据集，测试集是在训练完成以后评估模型的数据集。这里我们不需要评估模型最终的结果如何，所以没有使用测试集，按8:2分成了训练集和验证集。train是训练集，val是验证集。这里还有lst文件和idx文件，lst文件里是图片路径的list，即train和val数据集里各有哪些图片。详细制作方法参见https://mxnet.incubator.apache.org/versions/master/faq/recordio.html?highlight=rec%20file。
 
-**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets 并登录自己的华为云账号，选择适合的下载。
+**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets并登录自己的华为云账号，选择适合的下载。
 
 图1.2 下载obs-browser
 
@@ -80,7 +80,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 
 
-**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.4填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据集里从市场导入的Caltech101所在的桶路径；计算节点规格选用计算型GPU（P100实例）；**AI引擎选用mxnet。**
+**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.4填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据集里从市场导入的Caltech101所在的桶路径；**AI引擎选用mxnet。** 注意选择mxnet1.2.1python3.6引擎。
 
 
 图2.4 训练作业参数配置
@@ -97,15 +97,16 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 4. lr_step: str，学习率减小的epoch，默认为‘16,24,27’，也就是说学习率会在第16个epoch结束时减小为原来的0.1倍，为0.01，第24,27epoch同理；
 5. num_layers：int，resnet模型的卷积层数，可供选择的有18,34,50，默认为34；
 6. disp_batches：int，每隔多少步输出一次，默认20；
+7. 计算节点规格选用计算型GPU（P100实例）；
 
-**步骤 4**  &#160; &#160;  参数确认无误后，单击“立即创建”，完成训练作业创建。等待训练作业完成后会显示运行成功，就完成了模型训练过程。如有问题，可从训练作业界面点击作业名称，进入作业详情界面查看训练作业日志信息。
+**步骤 4**  &#160; &#160;  参数确认无误后，单击“立即创建”，完成训练作业创建。训练作业完成后，即完成了模型训练过程。如有问题，可从训练作业界面点击作业名称，进入作业详情界面查看训练作业日志信息。
 
 
 ### 3. 部署模型
 
 模型训练完成后，可以创建预测作业，将模型部署为在线预测服务，要部署成推理服务需要上传推理代码和配置文件，操作步骤如下：
 
-**步骤 1**  &#160; &#160; 上传需要的推理代码和config.json文件。这两个文件存放在codes目录下，分别叫customize_service.py和config.json。将这两个文件上传至输出路径的model目录下。
+**步骤 1**  &#160; &#160; 上传需要的推理代码和config.json文件。这两个文件存放在codes目录下，分别叫customize_service.py和config.json。将这两个文件上传至输出路径的model目录下，这里model目录是代码生成的，用于适配部署推理服务的需要。
 
 图3.1 上传推理代码和config.json文件
 
