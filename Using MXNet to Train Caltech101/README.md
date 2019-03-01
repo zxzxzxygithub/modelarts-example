@@ -22,7 +22,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 本实验不需要下载该数据集，通过下载市场里共享的数据集到自己的OBS（对象存储容器）中，具体操作如下：
 
-**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥，关于ak/sk的获取参考https://support.huaweicloud.com/usermanual-modelarts/modelarts_02_0003.html，注意，要使用modelarts的功能必须完成实名认证。完成后如图:
+**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥，关于ak/sk的获取参考https://support.huaweicloud.com/usermanual-modelarts/modelarts_02_0003.html 注意，要使用modelarts的功能必须完成实名认证。完成后如图:
 
 <img src="images/添加aksk.png" width="800px" />
 
