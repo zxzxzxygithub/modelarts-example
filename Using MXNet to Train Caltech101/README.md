@@ -18,7 +18,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 ### 1. 准备数据
 
-数据集介绍： Caltech101数据集是加利福尼亚理工学院提供的101类（加一个背景类）开源图像数据集，每一类大约有40~800张左右的图片，每张图片是接近300×200大小不等的。关于该数据集详细可以参见http://www.vision.caltech.edu/Image_Datasets/Caltech101/#Description。
+数据集介绍： Caltech101数据集是加利福尼亚理工学院提供的101类（加一个背景类）开源图像数据集，每一类大约有40~800张左右的图片，每张图片是接近300×200大小不等的。关于该数据集详细可以参见http://www.vision.caltech.edu/Image_Datasets/Caltech101/#Description
 
 本实验不需要下载该数据集，通过下载市场里共享的数据集到自己的OBS（对象存储容器）中，具体操作如下：
 
