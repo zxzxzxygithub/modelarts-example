@@ -18,15 +18,15 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 ### 1. 准备数据
 
-数据集介绍： Caltech101数据集是加利福尼亚理工学院提供的101类（加一个背景类）开源图像数据集，每一类大约有40~800张左右的图片，每张图片是接近300×200大小不等的。关于该数据集详细可以参见http://www.vision.caltech.edu/Image_Datasets/Caltech101/#Description。
+数据集介绍： Caltech101数据集是加利福尼亚理工学院提供的101类（加一个背景类）开源图像数据集，每一类大约有40~800张左右的图片，每张图片是接近300×200大小不等的。关于该数据集详细可以参见http://www.vision.caltech.edu/Image_Datasets/Caltech101/#Description
 
 本实验不需要下载该数据集，通过下载市场里共享的数据集到自己的OBS（对象存储容器）中，具体操作如下：
 
-**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥，关于ak/sk的获取参考https://support.huaweicloud.com/usermanual-modelarts/modelarts_02_0003.html，注意，要使用modelarts的功能必须完成实名认证。完成后如图:
+**步骤 1**  &#160; &#160; 添加AK/SK，为了能正常使用存储功能，需要添加账户的AK/SK，登录“[ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”管理控制台，在“全局配置”界面添加访问秘钥，关于ak/sk的获取参考https://support.huaweicloud.com/usermanual-modelarts/modelarts_02_0003.html 注意，要使用modelarts的功能必须完成实名认证。完成后如图:
 
 <img src="images/添加aksk.png" width="800px" />
 
-**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://10.175.38.120/xuchao6/dataset/caltech101.zip下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
+**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://10.175.38.120/xuchao6/dataset/caltech101.zip 下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
 
 数据集解释：该数据集分为两部分，
 
@@ -34,7 +34,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 另一部分mxnet_format是为了方便进行预处理操作，已经制作好了MXNet使用的rec文件。这里需要说明的是，在深度学习领域，训练之前一般会把数据集按6:2:2的比例分成训练集、验证集和测试集。训练集就是我们训练时使用的数据集，验证集是在训练过程中评估模型好坏的数据集，测试集是在训练完成以后评估模型的数据集。这里我们不需要评估模型最终的结果如何，所以没有使用测试集，按8:2分成了训练集和验证集。train是训练集，val是验证集。这里还有lst文件和idx文件，lst文件里是图片路径的list，即train和val数据集里各有哪些图片。详细制作方法参见https://mxnet.incubator.apache.org/versions/master/faq/recordio.html?highlight=rec%20file。
 
-**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets并登录自己的华为云账号，选择适合的下载。
+**步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets 并登录自己的华为云账号，选择适合的下载。
 
 图1.2 下载obs-browser
 
