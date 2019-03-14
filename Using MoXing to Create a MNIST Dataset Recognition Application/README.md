@@ -62,7 +62,7 @@
 
 模型训练完成后，将模型部署为在线预测服务，操作步骤如下：
 
-**步骤 1**  &#160; &#160; 将推理代码[customize\_service.py](https://github.com/huawei-clouds/modelarts-example/blob/master/Using%20MoXing%20to%20Create%20a%20MNIST%20Dataset%20Recognition%20Application/codes/customize_service.py)和配置文件[config.json](https://github.com/huawei-clouds/modelarts-example/blob/master/Using%20MoXing%20to%20Create%20a%20MNIST%20Dataset%20Recognition%20Application/codes/config.json) 上传到/mnist-example/mnist)}；“算法来源”请选择“常用框架”，“AI引擎”选择“TensorFlow"；“代码目录”请选择型训练脚本文件train\_mnist.py所在的OBS父目/log/model/目录下。customize_service.py文件为推理代码，config.json 为推理需要获取的相关配置信息。
+**步骤 1**  &#160; &#160; 将推理代码[customize\_service.py](https://github.com/huawei-clouds/modelarts-example/blob/master/Using%20MoXing%20to%20Create%20a%20MNIST%20Dataset%20Recognition%20Application/codes/customize_service.py)和配置文件[config.json](https://github.com/huawei-clouds/modelarts-example/blob/master/Using%20MoXing%20to%20Create%20a%20MNIST%20Dataset%20Recognition%20Application/codes/config.json) 上传到/mnist-example/log/model/目录下；customize_service.py文件为推理代码，config.json 为推理需要获取的相关配置信息。
 
 **步骤 2**  &#160; &#160;点击“训练作业”->"train_mnist"，进入训练作业后点击右上角的“创建模型”（或者进入“模型管理”界面，单击左上角的“导入”），参考下图填写参数。名称可随意填写，“版本”按照要求输入，“元模型来源”选择“从训练中选择”->“选择训练作业”和“版本”（或者选择“指定元模型位置”，“选择元模型”的路径与训练模型中“训练输出位置”保持一致：/mnist-example/log/）。
 
