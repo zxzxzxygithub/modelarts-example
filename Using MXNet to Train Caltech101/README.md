@@ -26,7 +26,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 <img src="images/添加aksk.png" width="800px" />
 
-**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://10.175.38.120/xuchao6/dataset/caltech101.zip 下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
+**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://modelarts-cnnorth1-learning-course.obs.cn-north-1.myhuaweicloud.com/dataset/caltech101.zip 下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
 
 数据集解释：该数据集分为两部分，
 
