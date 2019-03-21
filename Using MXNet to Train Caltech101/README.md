@@ -26,7 +26,14 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 <img src="images/添加aksk.png" width="800px" />
 
-**步骤 2**  &#160; &#160;完成AK/SK添加后，从链接https://modelarts-cnnorth1-learning-course.obs.cn-north-1.myhuaweicloud.com/dataset/caltech101.zip 下载数据集，并将数据集解压到本地，会得到一个caltech101的文件。
+**步骤 2**  &#160; &#160;完成AK/SK添加后，可以从市场中导入数据集，如图所示：
+图1.1 从市场中下载数据集
+<img src="images/data_market.png" width="800px" />
+
+进入页面后点击导入至我的数据集。
+导入完成后我们可以在左侧数据管理的数据集页面看到导入的数据集：
+图1.2 数据管理
+<img src="images/data_download.png" width="800px" />
 
 数据集解释：该数据集分为两部分，
 
@@ -36,19 +43,19 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 **步骤 3**    &#160;上传数据集到obs，下载obs-browser并使用obs-browser上传代码到obs。点击链接https://storage.huaweicloud.com/obs/?region=cn-north-1#/obs/buckets 并登录自己的华为云账号，选择适合的下载。
 
-图1.2 下载obs-browser
+图1.3 下载obs-browser
 
 <img src="images/downloadobs.png" width="800px" />
 
 下载好的obs-browser是一个压缩包，将里面所有的文件解压，然后点击obs.exe运行。在打开的界面右上角添加账户，账户名可任意填写，AccessKeyID和SecretAccessKey就是在准备数据前添加的AK/SK。
 
-图1.3 obs-browser添加账号
+图1.4 obs-browser添加账号
 
 <img src="images/obsadduser.png" width="800px" />
 
 将caltech101整个文件上传至OBS桶中并等待右上角云标志传输完成。
 
-图1.4 上传文件至OBS
+图1.5 上传文件至OBS
 
 <img src="images/uploaddata.png" width="800px" />
 
@@ -80,12 +87,12 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 
 
 
-**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.4填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据集里从市场导入的Caltech101所在的桶路径；**AI引擎选用mxnet。** 注意选择mxnet1.2.1python3.6引擎。
+**步骤 3**  &#160; &#160; 在“训练作业”界面，单击左上角的“创建”，参考图2.4填写训练作业参数。 “名称”和“描述”可以随意填写；“数据来源”请选择数据管理中数据集的名称和对应版本，版本默认是最新的版本；**AI引擎选用mxnet。** 注意选择mxnet1.2.1python3.6引擎。
 
 
 图2.4 训练作业参数配置
 
-<img src="images/trainparams.png" width="800px" />
+<img src="images/train_job.png" width="800px" />
 
 注意数据集位置要选到mxnet_format目录下，可以在运行参数中填写可选运行参数，说明如下。
 
