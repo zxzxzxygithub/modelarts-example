@@ -87,6 +87,9 @@
 
 完成模型部署后，在部署上线-在线服务界面可以看到已上线的预测服务名称，当预测服务显示为“运行中”时，点击进入可以进行在线预测。
 
+注意：预测图片可参考[mnist图片](https://github.com/huawei-clouds/modelarts-example/tree/master/Using%20MXNet%20to%20Create%20a%20MNIST%20Dataset%20Recognition%20Application/mnist_pic)，预测图片需为单通道28*28手写数字图片,jpg格式，mnist案例不支持彩色图片预测，若为其他不符合格式的单通道图片，预测结果可能会存在偏差。
+
+
 图9 在线服务测试
 
 <img src="images/在线服务测试.PNG" width="800px" />
