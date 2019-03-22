@@ -29,7 +29,7 @@ MXNet的典型项目：人脸识别冠军项目InsightFace，参见链接https:/
 **步骤 2**  &#160; 完成AK/SK添加后，可以从市场中导入数据集，返回“ModelArts”总览界面，单击左侧导航栏的“市场”。切换到ModelArts市场的“数据集”页面，找到数据集“Caltech101-data-set”。进入到该预置数据集的详情页面。如图所示：
 
 图1.1 从市场中下载数据集
-<img src="images/data_market.png" width="800px" />
+<img src="images/data_market.jpg" width="800px" />
 
 进入页面后点击导入至我的数据集。
 导入完成后我们可以在左侧数据管理的数据集页面看到导入的数据集：
