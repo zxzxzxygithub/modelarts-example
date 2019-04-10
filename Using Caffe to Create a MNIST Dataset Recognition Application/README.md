@@ -67,4 +67,5 @@
   3. 本案例在prototxt文件中填写某些固定路径，因此在填写参数时，需要注意和prototxt文件中路径的对应关系。
      (1)  在`lenet_solver.prototxt`中网络结构定义文件`lenet_train_test.prototxt`的路径为`/home/work/user-job-dir/codes/lenet_train_test.prototxt`，该路径和参数`data_path_suffix`有关，对应参数`data_path_suffix`的值为`codes`。
      (2) 在`lenet_train_test.prototxt`中数据集的路径为`/home/work/dataset/mnist_train_lmdb`和`/home/work/dataset/mnist_test_lmdb`，该路径和参数`data_local_path`有关，对应参数`data_local_path`的值为`/home/work/dataset`。
+     (3) 在`lenet_solver.prototxt`中本地保存模型的路径为`/home/work/lenet_mnist/`，该路径和参数`model_local_path`有关，对应参数`model_local_path`的值为`/home/work/lenet_mnist`。
   4. 本案例需要在`GPU`模式下运行。在`CPU`模式下运行，需要将`lenet_solver.prototxt`文件中`solver_mode`改成`CPU`。
