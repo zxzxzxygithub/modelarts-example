@@ -21,7 +21,7 @@
 
 **步骤 3**  &#160; &#160; 进入到该预置数据集“Caffe-Mnist”的详情页面，执行“导入到我的数据集”操作，页面会自动跳转到“数据管理>数据集”页面进行创建。
 
-![导入数据集](images\导入数据集.PNG)
+<img src="images/导入数据集.PNG" width="800px" />
 
 **注：在执行“导入到我的数据集”操作时，需要指定到具体目录，即`s3://桶名/目录名`，不可以只指定到桶`s3://桶名`。本案例中OBS的路径为`s3://modelarts-wrk/caffe/caffe_mnist_data`，桶名为`modelarts-wrk`，最后一级目录名称为`caffe_mnist_data`，**
 
@@ -41,7 +41,7 @@
 
 **步骤 3（可选）**  &#160; &#160; 如果将prototxt文件放到数据集目录下，在“ModelArts”管理控制台的“数据管理>数据集”页面选择数据集，并点击“数据源同步”。或者可以直接操作OBS，将prototxt文件放到`s3://modelarts-wrk/caffe/caffe_mnist_data`目录下。
 
-![同步数据源](images\同步数据源.PNG)
+<img src="images/同步数据源.PNG" width="800px" />
 
 **步骤 4**  &#160; &#160; 利用[OBS Browser](https://obstool-north.obs.myhwclouds.com/browser/hec/win64/OBSBrowser.zip)创建桶，并参考<a href = "https://support.huaweicloud.com/usermanual-dls/dls_01_0040.html">“上传业务数据”</a>章节内容，将启动训练的python脚本和prototxt文件上传到OBS桶中（注意路径中不要出现中文；本案例中已编写好了训练脚本[train.py](codes/train.py)）。
 
@@ -94,7 +94,7 @@
 
 在本案中选择的代码OBS路径为`s3://modelarts-wrk/caffe/codes`，如下图所示，则平台会自动将代码会下载到`/home/work/user-job-dir/codes/`目录下。
 
- ![代码目录](images\代码目录.PNG)
+<img src="images/代码目录.PNG" width="800px" />
 
 ```
 1. OBS代码路径结构
@@ -147,6 +147,13 @@ if mox.file.exists(data_url):
 ```
 # The train/test net protocol buffer definition
 net: "/home/work/user-job-dir/codes/lenet_train_test.prototxt"
+```
+
+​    如果将prototxt文件上传到数据集的OBS路径下，并调用`mox.file.copy_parallel`下载到`/home/work/dataset`路径下，则`lenet_solver.prototxt`文件中配置如下所示。
+
+```
+# The train/test net protocol buffer definition
+net: "/home/work/dataset/lenet_train_test.prototxt"
 ```
 
 ###### 4.3.2 `lenet_train_test.prototxt`文件中数据集的路径配置
