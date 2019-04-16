@@ -82,7 +82,7 @@
      os.system(cmd)
      ```
 
-其中`solver`参数指定prototxt文件`lenet_train_test.prototxt`，`gpu_nums`指定GPU显卡的数目，如果是CPU模式，则不添加该参数
+其中`solver`参数指定prototxt文件`lenet_train_test.prototxt`，`gpu_nums`指定GPU显卡的数目，如果是CPU模式，则不添加该参数。
 
 ##### 4.2 代码和数据集下载
 
@@ -154,7 +154,7 @@ net: "/home/work/dataset/lenet_train_test.prototxt"
 
 ###### 4.3.2 数据集的路径配置
 
-​    在`lenet_train_test.prototxt`文件中，需要对训练集和测试集的数据集路径进行配置。在`4.2.2`章节中已经提到，数据集需要用户调用`mox.file.copy_parallel`下载，在本案例中`data_local_path`采用默认值`/home/work/dataset`，则数据集被下载到`/home/work/dataset`目录下
+​    在`lenet_train_test.prototxt`文件中，需要对训练集和测试集的数据集路径进行配置。在`4.2.2`章节中已经提到，数据集需要用户调用`mox.file.copy_parallel`下载，在本案例中`data_local_path`采用默认值`/home/work/dataset`，则数据集被下载到`/home/work/dataset`目录下。
 
 ```
 1. 数据集OBS路径结构
