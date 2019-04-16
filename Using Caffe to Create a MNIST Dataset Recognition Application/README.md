@@ -23,7 +23,7 @@
 
 <img src="images/导入数据集.PNG" width="800px" />
 
-**注：在执行“导入到我的数据集”操作时，需要指定到具体目录，即`s3://桶名/目录名`，不可以只指定到桶`s3://桶名`。本案例中OBS的路径为`s3://modelarts-wrk/caffe/caffe_mnist_data`，桶名为`modelarts-wrk`，最后一级目录名称为`caffe_mnist_data`，**
+**注：在执行“导入到我的数据集”操作时，需要指定到具体目录，即`s3://桶名/目录名`，不可以只指定到桶`s3://桶名`。本案例中OBS的路径为`s3://modelarts-wrk/caffe/caffe_mnist_data`，桶名为`modelarts-wrk`，最后一级目录名称为`caffe_mnist_data`。**
 
 **步骤 4**  &#160; &#160; 在ModelArts管理控制台的“数据管理>数据集”页面查看直到mnist数据集（caffe-mnist）创建完成，数据详细信息完全加载。
 
