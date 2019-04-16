@@ -133,7 +133,7 @@ if mox.file.exists(data_url):
   mox.file.copy_parallel(src_url=data_url, dst_url=local_dataset_url)
 ```
 
-其中本地数据集目录对应参数`data_local_path`，默认值为`/home/work/dataset`。由于`/home/work`下存储空间有限，对于较大的数据集建议下载到`/cache`目录下。
+其中本地数据集目录对应参数`data_local_path`，默认值为`/home/work/dataset`。由于本地`/home/work`目录下存储空间有限，对于较大的数据集建议下载到`/cache`目录下。
 
 ##### 4.3 prototxt文件中固定路径
 
