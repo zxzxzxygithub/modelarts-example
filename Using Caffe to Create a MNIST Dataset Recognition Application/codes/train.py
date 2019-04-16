@@ -25,7 +25,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_url', type=str, default='s3://obs--jnn/datasets/caffe_mnist/',
                         help='the obs url to save data')
-    parser.add_argument('--num_gpus', type=int, default=1,
+    parser.add_argument('--num_gpus', type=int, default=0,
                         help='num of gpus')
     parser.add_argument('--train_url', type=str, default='s3://obs--jnn/save_model/caffe_mnist/',
                         help='the obs url to save model')
