@@ -155,7 +155,7 @@ net: "/home/work/user-job-dir/codes/lenet_train_test.prototxt"
 net: "/home/work/dataset/lenet_train_test.prototxt"
 ```
 
-###### 4.3.2 `lenet_train_test.prototxt`文件中数据集的路径配置
+###### 4.3.2 数据集的路径配置
 
 ​    在`lenet_train_test.prototxt`文件中，需要对训练集和测试集的数据集路径进行配置。在`4.2.2`章节中已经提到，数据集需要用户调用`mox.file.copy_parallel`下载，在本案例中`data_local_path`采用默认值`/home/work/dataset`，则数据集被下载到`/home/work/dataset`目录下
 
