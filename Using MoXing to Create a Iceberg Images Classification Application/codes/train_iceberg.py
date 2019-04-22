@@ -20,20 +20,22 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-
 os.environ.pop('http_proxy', None)
 import math
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow.contrib import slim
-from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dense
 from tensorflow.python.keras.layers import Dropout, Flatten, Activation, Concatenate
 from moxing.tensorflow.datasets.tfrecord_common import ImageClassificationTFRecordMetadata
 from moxing.tensorflow.datasets.tfrecord_common import BaseTFRecordDataset
-from moxing.tensorflow.datasets.tfrecord_common import ImageClassificationTFRecordDataset
-
 import moxing.tensorflow as mox
+from moxing.tensorflow.utils import tf_util
+if tf_util.version_info() > (1, 13, 0):
+  from tensorflow.python.layers.layers import Conv2D, MaxPooling2D, Dense
+else:
+  from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dense
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 NUM_SAMPLES_TRAIN = 1176
@@ -91,7 +93,7 @@ def input_fn(run_mode, **kwargs):
       feature_tensors = [parsed[key] for key in custom_feature_keys]
       return tuple(feature_tensors)
 
-    def _build_feature(self, band_1, band_2, angle, id_or_label):
+    def _build_features(self, band_1, band_2, angle, id_or_label):
       band_1 = tf.reshape(band_1, shape=[75, 75])
       band_2 = tf.reshape(band_2, shape=[75, 75])
       self._add_feature('band_1', band_1)
@@ -102,38 +104,10 @@ def input_fn(run_mode, **kwargs):
       else:
         self._add_feature('label', id_or_label)
 
-  if tf.__version__.split('.')[1] == '8':
-    dataset = IcebergTFRecordDataset(dataset_meta,
-                                     shuffle=shuffle,
-                                     num_parallel=num_readers,
-                                     num_epochs=num_epochs)
-  else:
-    keys_to_features = {
-      'band_1': tf.FixedLenFeature((75 * 75,), tf.float32, default_value=None),
-      'band_2': tf.FixedLenFeature((75 * 75,), tf.float32, default_value=None),
-      'angle': tf.FixedLenFeature([1], tf.float32, default_value=None),
-    }
-
-    items_to_handlers = {
-      'band_1': slim.tfexample_decoder.Tensor('band_1', shape=[75, 75]),
-      'band_2': slim.tfexample_decoder.Tensor('band_2', shape=[75, 75]),
-      'angle': slim.tfexample_decoder.Tensor('angle', shape=[])
-    }
-
-    if run_mode == mox.ModeKeys.PREDICT:
-      keys_to_features['id'] = tf.FixedLenFeature([1], tf.string, default_value=None)
-      items_to_handlers['id'] = slim.tfexample_decoder.Tensor('id', shape=[])
-    else:
-      keys_to_features['label'] = tf.FixedLenFeature([1], tf.int64, default_value=None)
-      items_to_handlers['label'] = slim.tfexample_decoder.Tensor('label', shape=[])
-
-    dataset = ImageClassificationTFRecordDataset(dataset_meta,
-                                                 keys_to_features,
-                                                 items_to_handlers,
-                                                 shuffle=shuffle,
-                                                 num_readers=num_readers,
-                                                 num_epochs=num_epochs)
-
+  dataset = IcebergTFRecordDataset(dataset_meta,
+                                   shuffle=shuffle,
+                                   num_parallel=num_readers,
+                                   num_epochs=num_epochs)
 
   if run_mode == mox.ModeKeys.PREDICT:
     band_1, band_2, id_or_label, angle = dataset.get(['band_1', 'band_2', 'id', 'angle'])
