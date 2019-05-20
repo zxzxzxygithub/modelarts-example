@@ -87,12 +87,6 @@ def input_fn(run_mode, **kwargs):
 
   class IcebergTFRecordDataset(BaseTFRecordDataset):
 
-    def _parser(self, record):
-      features = dict(zip(custom_feature_keys, custom_feature_values))
-      parsed = tf.parse_single_example(record, features)
-      feature_tensors = [parsed[key] for key in custom_feature_keys]
-      return tuple(feature_tensors)
-
     def _build_features(self, band_1, band_2, angle, id_or_label):
       band_1 = tf.reshape(band_1, shape=[75, 75])
       band_2 = tf.reshape(band_2, shape=[75, 75])
@@ -105,6 +99,8 @@ def input_fn(run_mode, **kwargs):
         self._add_feature('label', id_or_label)
 
   dataset = IcebergTFRecordDataset(dataset_meta,
+                                   feature_keys=custom_feature_keys,
+                                   feature_values=custom_feature_values,
                                    shuffle=shuffle,
                                    num_parallel=num_readers,
                                    num_epochs=num_epochs)
