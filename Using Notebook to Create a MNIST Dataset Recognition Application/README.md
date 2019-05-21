@@ -3,7 +3,7 @@
 
 文档包含内容：
 
-1. **./code/mnist_example.ipynb**：Notebook运行文件。
+1. **./codes/mnist_example.ipynb**：Notebook运行文件。
 2. **./data/test.jpg**：预测使用图片。
 
 具体运行指导文档请参考“[华为云ModelArt帮助文档](https://support.huaweicloud.com/qs-modelarts/modelarts_06_0005.html)”
