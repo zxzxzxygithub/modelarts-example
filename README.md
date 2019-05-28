@@ -23,6 +23,6 @@
 本案例介绍如何借助华为云ModelArts服务平台上的自动学习场景，为您提供精准营销的方向和辅助决策，提升消费品转化率和商家利润，改善消费者的消费体验。
 
 
-###  **案例 6**  &#160; &#160;Using TensorFlow to Create a MNIST Dataset Recognition Application
+###  **案例 6**  &#160; &#160;[Using TensorFlow to Create a MNIST Dataset Recognition Application](https://github.com/huawei-clouds/modelarts-example/tree/master/Using%20TensorFlow%20to%20Create%20a%20MNIST%20Dataset%20Recognition%20Application)
 
 本案例介绍如何在“[华为云ModelArts](https://console.huaweicloud.com/modelarts/?region=cn-north-1#/manage/dashboard)”平台上使用TensorFlow实现MNIST数据集的手写数字图像识别应用。
