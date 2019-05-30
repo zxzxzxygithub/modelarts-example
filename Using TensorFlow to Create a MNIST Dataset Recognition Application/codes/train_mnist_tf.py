@@ -1,107 +1,78 @@
-from tensorflow.examples.tutorials.mnist import input_data
-import tensorflow as tf
-import numpy as np
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
-from tensorflow.python.framework import graph_util
 
-tf.flags.DEFINE_string('data_url', None, 'Dir of dataset')
-tf.flags.DEFINE_string('train_url', None, 'Train Url')
-tf.flags.DEFINE_integer('max_num_steps', 1000, 'training epochs')
-tf.flags.DEFINE_boolean('is_training', True, 'train')
+import tensorflow as tf
+from tensorflow.examples.tutorials.mnist import input_data
 
-flags = tf.flags.FLAGS
+tf.flags.DEFINE_integer('max_steps', 1000, 'number of training iterations.')
+tf.flags.DEFINE_string('data_url', '/home/jnn/nfs/mnist', 'dataset directory.')
+tf.flags.DEFINE_string('train_url', '/home/jnn/temp/delete', 'saved model directory.')
+
+FLAGS = tf.flags.FLAGS
+
 
 def main(*args):
+  # Train model
+  print('Training model...')
+  mnist = input_data.read_data_sets(FLAGS.data_url, one_hot=True)
+  sess = tf.InteractiveSession()
+  serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
+  feature_configs = {'x': tf.FixedLenFeature(shape=[784], dtype=tf.float32),}
+  tf_example = tf.parse_example(serialized_tf_example, feature_configs)
+  x = tf.identity(tf_example['x'], name='x')
+  y_ = tf.placeholder('float', shape=[None, 10])
+  w = tf.Variable(tf.zeros([784, 10]))
+  b = tf.Variable(tf.zeros([10]))
+  sess.run(tf.global_variables_initializer())
+  y = tf.nn.softmax(tf.matmul(x, w) + b, name='y')
+  cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
 
-  def train(data_url):
-    mnist = input_data.read_data_sets(data_url, one_hot=True)
+  tf.summary.scalar('cross_entropy', cross_entropy)
 
-    image = tf.placeholder(tf.float32, [None, 784], name='input_image')
-    label = tf.placeholder(tf.float32, [None, 10])
+  train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
 
-    W = tf.get_variable(name='W', initializer=tf.zeros([784, 10]))
-    b = tf.get_variable(name='b', initializer=tf.zeros([10]))
+  correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+  accuracy = tf.reduce_mean(tf.cast(correct_prediction, 'float'))
+  tf.summary.scalar('accuracy', accuracy)
+  merged = tf.summary.merge_all()
+  test_writer = tf.summary.FileWriter(FLAGS.train_url, flush_secs=1)
 
-    label_predict = tf.nn.softmax(tf.matmul(image, W) + b, name='label_predict')
-    cross_entropy = -tf.reduce_sum(label * tf.log(label_predict))
-    train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
-    global_step = tf.train.get_or_create_global_step()
+  for step in range(FLAGS.max_steps):
+    batch = mnist.train.next_batch(50)
+    train_step.run(feed_dict={x: batch[0], y_: batch[1]})
+    if step % 10 == 0:
+      summary, acc = sess.run([merged, accuracy], feed_dict={x: mnist.test.images, y_: mnist.test.labels})
+      test_writer.add_summary(summary, step)
+      print('training accuracy is:', acc)
+  print('Done training!')
 
-    correct_prediction = tf.equal(tf.argmax(label_predict, 1), tf.argmax(label, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+  builder = tf.saved_model.builder.SavedModelBuilder(os.path.join(FLAGS.train_url, 'model'))
 
-    with tf.control_dependencies([train_step]):
-      inc_global_step = global_step.assign_add(1).op
+  tensor_info_x = tf.saved_model.utils.build_tensor_info(x)
+  tensor_info_y = tf.saved_model.utils.build_tensor_info(y)
 
-    scaffold = tf.train.Scaffold(saver=tf.train.Saver(), )
-    with tf.train.MonitoredTrainingSession(scaffold=scaffold,
-                                           save_checkpoint_steps=50,
-                                           checkpoint_dir=flags.train_url) as sess:
+  prediction_signature = (
+      tf.saved_model.signature_def_utils.build_signature_def(
+          inputs={'images': tensor_info_x},
+          outputs={'scores': tensor_info_y},
+          method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
-      for step in range(flags.max_num_steps):
+  builder.add_meta_graph_and_variables(
+      sess, [tf.saved_model.tag_constants.SERVING],
+      signature_def_map={
+          'predict_images':
+              prediction_signature,
+      },
+      main_op=tf.tables_initializer(),
+      strip_default_attrs=True)
 
-        batch_xs, batch_ys = mnist.train.next_batch(64)
-        sess.run(inc_global_step, feed_dict={image: batch_xs, label: batch_ys})
-        if step % 10 == 0:
-          cro, acc = sess.run([cross_entropy, accuracy], feed_dict={image: mnist.test.images, label: mnist.test.labels})
-          print("Step:%03d\tcost:%.3f\taccuracy:%.3f" % (step, cro, acc))
+  builder.save()
 
-  def freeze_graph(input_checkpoint, output_graph):
-    output_node_names = 'label_predict'
-    saver = tf.train.import_meta_graph(input_checkpoint + '.meta', clear_devices=True)
-    graph = tf.get_default_graph()
-    input_graph_def = graph.as_graph_def()
+  print('Done exporting!')
 
-    with tf.Session() as sess:
-      saver.restore(sess, input_checkpoint)
-      output_graph_def = graph_util.convert_variables_to_constants(
-        sess=sess,
-        input_graph_def=input_graph_def,
-        output_node_names=output_node_names.split(","))
-
-      with tf.gfile.GFile(output_graph, "wb") as f:
-        f.write(output_graph_def.SerializeToString())
-      print("%d ops in the final graph." % len(output_graph_def.node))
-
-  def freeze_graph_test(pb_path, image_path):
-
-    with tf.Graph().as_default():
-      output_graph_def = tf.GraphDef()
-      with tf.gfile.GFile(pb_path, "rb") as f:
-        output_graph_def.ParseFromString(f.read())
-        tf.import_graph_def(output_graph_def, name="")
-      with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        input_img_name = sess.graph.get_tensor_by_name('input_image:0')
-        output_tensor_name = sess.graph.get_tensor_by_name('label_predict:0')
-        image_raw = tf.gfile.FastGFile(image_path, 'rb').read()
-        image = tf.image.decode_jpeg(image_raw).eval()
-        image.resize((1, 784))
-        out = sess.run(output_tensor_name, feed_dict={input_img_name: image})
-        score = tf.nn.softmax(out, name='pre')
-        class_id = tf.argmax(score, 1)
-        print("Predict number is:{}".format(sess.run(class_id)))
-
-
-  model_path = os.path.join(flags.train_url, 'model')
-  output_graph = os.path.join(model_path, 'saved_model.pb')
-
-  if flags.is_training:
-
-    if tf.gfile.IsDirectory(model_path):
-      tf.gfile.DeleteRecursively(model_path)
-    tf.gfile.MkDir(model_path)
-
-    train(data_url=flags.data_url)
-    with tf.gfile.GFile(os.path.join(flags.train_url, 'checkpoint'), 'rb') as f:
-      input_checkpoint = f.readline().split('"')[1]
-    input_checkpoint = os.path.join(flags.train_url, input_checkpoint)
-    freeze_graph(input_checkpoint, output_graph)
-
-  else:
-    test_image = [os.path.join(flags.data_url, img) for img in tf.gfile.ListDirectory(flags.data_url)]
-    for image in test_image:
-      freeze_graph_test(output_graph, image)
 
 if __name__ == '__main__':
   tf.app.run(main=main)
