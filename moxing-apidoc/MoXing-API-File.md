@@ -306,3 +306,89 @@ setattr(NDFrame, 'to_hdf', to_hdf_override)
 setattr(pytables, 'read_hdf', read_hdf_override)
 setattr(pd, 'read_hdf', read_hdf_override)
 ```
+
+利用moxing，使h5py.File支持s3
+
+    import os
+    import h5py
+    import numpy as np
+    import moxing as mox
+    
+    
+    class OBSFile(h5py.File):
+      def __init__(self, name, *args, **kwargs):
+        self._tmp_name = None
+        self._target_name = name
+        if name.startswith('s3://'):
+          self._tmp_name = name.replace('/', '_')
+          if mox.file.exists(name):
+            mox.file.copy(name, os.path.join('cache', 'h5py_tmp', self._tmp_name))
+          name = self._tmp_name
+    
+        super(OBSFile, self).__init__(name, *args, **kwargs)
+    
+      def close(self):
+        if self._tmp_name:
+          mox.file.copy(self._tmp_name, self._target_name)
+    
+        super(OBSFile, self).close()
+    
+    
+    setattr(h5py, 'File', OBSFile)
+    
+    arr = np.random.randn(1000)
+    with h5py.File('s3://bucket/random.hdf5', 'w') as f:
+      f.create_dataset("default", data=arr)
+    
+    with h5py.File('s3://bucket/random.hdf5', 'w') as f:
+      print(f.require_dataset("default", dtype=np.float32, shape=(1000,)))
+
+
+### 2.5. 为接口设置超时
+
+超时只能工作在主进程/主线程/子进程下，子线程无法捕获超时。每个接口的默认超时时间：
+
+```python
+_TIMEOUT_SETTINGS = {
+  'completeMultipartUpload': 300,  # post
+  'copyPart': None,  # put
+  'copyObject': None,  # put
+  'deleteObject': 300,  # delete
+  'getObject': None,  # get
+  'getObjectMetadata': 30,  # head
+  'initiateMultipartUpload': 60,  # post
+  'listObjects': 300,  # get
+  'putContent': None,  # put
+  'putFile': None,  # put
+  'putObject': None,  # put
+  'uploadPart': None,  # put
+}
+```
+
+设置getObjectMetadata接口的超时时间为10秒
+
+```python
+import moxing as mox
+mox.file.set_auth(timeout_config={'getObjectMetadata': 10})
+print(mox.file.exists('s3://bucket/object'))
+```
+
+### 2.6. 后台定期同步目录
+
+使用`mox.file.background_sync_copy`，后台定期从本地目录将所有文件同步到OBS，如果同步过程中发生异常，将会跳过此次同步，不会影响主线程工作。
+
+用户在使用ModelArts训练模型时，可以将模型保存在本地目录，定期同步到OBS，避免在训练过程中由于直接保存模型到OBS失败而导致整个训练作业失败或卡死。
+
+```python
+import moxing as mox
+
+def main():
+  local_train_url = '/cache/train_url'
+  obs_train_url = 's3://my_bucket/train_url'
+  
+  # train_url will be synchronized to obs_train_url every 120 seconds.
+  mox.file.background_sync_copy(local_train_url, obs_train_url, seconds=120)
+
+  # start your training using local cache
+  train_model(data_url, train_url)
+```
