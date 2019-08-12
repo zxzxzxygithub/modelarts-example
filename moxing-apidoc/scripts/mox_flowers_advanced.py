@@ -94,7 +94,7 @@ def main(*args, **kwargs):
           run_mode=mox.ModeKeys.TRAIN,
           log_dir=flags.train_url,
           checkpoint_path=flags.checkpoint_url,
-          max_number_of_steps=sys.maxint,
+          max_number_of_steps=sys.maxsize,
           export_model=mox.ExportKeys.TF_SERVING)
 
   print(time.time() - st)
