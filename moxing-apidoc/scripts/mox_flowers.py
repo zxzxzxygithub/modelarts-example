@@ -70,7 +70,7 @@ def main(_):
           model_fn=model_fn,
           optimizer_fn=optimizer_fn,
           run_mode=mox.ModeKeys.TRAIN,
-          max_number_of_steps=sys.maxint,
+          max_number_of_steps=sys.maxsize,
           log_dir=flags.train_url)
 
 
